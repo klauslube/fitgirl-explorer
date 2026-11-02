@@ -1,0 +1,53 @@
+<% content_for :title, "Catalog" %>
+
+<%= form_with url: games_path, method: :get, id: "filters-form",
+      data: { controller: "autosubmit", turbo_frame: "games", turbo_action: "advance" } do %>
+  <div class="mb-6" data-controller="collapse">
+    <div class="relative">
+      <svg class="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-500" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.48l4.31 4.3a1 1 0 01-1.4 1.42l-4.32-4.3A6 6 0 012 8z" clip-rule="evenodd"/></svg>
+      <%= search_field_tag :q, @search.query, placeholder: "Search by game name…", autocomplete: "off", autofocus: @search.query.nil? && !@search.filtered?,
+            "aria-label": "Search by game name",
+            class: "field !rounded-xl !bg-ink-800 !py-3.5 !pl-12 !text-base shadow-lg shadow-black/30",
+            data: { action: "input->autosubmit#queue" } %>
+    </div>
+
+    <div class="mt-4 flex flex-col gap-6 lg:flex-row">
+      <aside class="lg:w-72 lg:shrink-0">
+        <button type="button" class="btn-ghost w-full lg:hidden" data-action="collapse#toggle">
+          Filters<%= " (active)" if @search.filtered? %>
+        </button>
+        <div class="panel mt-3 hidden p-4 lg:sticky lg:top-20 lg:mt-0 lg:block" data-collapse-target="panel">
+          <%= render "games/filters", search: @search, selected_tags: @selected_tags, popular_tags: @popular_tags %>
+        </div>
+      </aside>
+
+      <section class="min-w-0 flex-1">
+        <div class="mb-4 flex items-center justify-between gap-3">
+          <span></span>
+          <div class="flex items-center gap-2">
+            <label for="sort" class="text-sm text-slate-500">Sort</label>
+            <%= select_tag :sort, options_for_select(sort_options, @search.sort), class: "field !w-auto !py-1.5",
+                  data: { action: "change->autosubmit#now" } %>
+          </div>
+        </div>
+
+        <%= turbo_frame_tag "games", data: { turbo_action: "advance" } do %>
+          <% if @games.empty? %>
+            <%= render "shared/empty_state", title: "No games match these filters",
+                  body: "Try a shorter name, fewer tags, or a lower comment threshold.",
+                  action_label: "Clear all filters", action_path: games_path %>
+          <% else %>
+            <p class="mb-4 text-sm text-slate-400">
+              <span class="font-semibold text-white"><%= number_with_delimiter(@pagy.count) %></span> games
+              <% if @pagy.pages > 1 %>· page <%= @pagy.page %> of <%= @pagy.pages %><% end %>
+            </p>
+            <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6">
+              <%= render partial: "shared/game_card", collection: @games, as: :game %>
+            </div>
+            <%= render "shared/pager", pagy: @pagy %>
+          <% end %>
+        <% end %>
+      </section>
+    </div>
+  </div>
+<% end %>

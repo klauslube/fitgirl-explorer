@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+  <head>
+    <title><%= content_for(:title).presence ? "#{content_for(:title)} · FitGirl Explorer" : "FitGirl Explorer" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="dark">
+    <meta name="referrer" content="no-referrer">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= yield :head %>
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body class="min-h-screen">
+    <%= render "shared/header" %>
+    <main class="mx-auto w-full max-w-[1500px] px-4 py-6 sm:px-6 lg:px-8">
+      <%= yield %>
+    </main>
+    <%= render "shared/footer" %>
+  </body>
+</html>

@@ -1,0 +1,31 @@
+# Rails
+/log/*
+/tmp/*
+!/log/.keep
+!/tmp/.keep
+/tmp/pids/*
+/tmp/storage/*
+/storage/*
+!/storage/.keep
+/public/assets
+/public/packs*
+
+# Secrets: never commit
+/config/master.key
+/config/*.key
+.env*
+!.env.example
+
+# Tailwind build output
+/app/assets/builds/*
+!/app/assets/builds/.keep
+
+# Misc
+/node_modules
+.bundle
+/vendor/bundle
+.DS_Store
+*.swp
+/coverage
+/.claude
+/graphify-out

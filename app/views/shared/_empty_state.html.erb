@@ -1,0 +1,9 @@
+<%# locals: title, body, action_label (opt), action_path (opt) %>
+<div class="panel flex flex-col items-center px-6 py-16 text-center">
+  <div class="mb-4 grid h-14 w-14 place-items-center rounded-full bg-white/5 text-slate-400" aria-hidden="true"><svg class="h-7 w-7" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.48l4.31 4.3a1 1 0 01-1.4 1.42l-4.32-4.3A6 6 0 012 8z" clip-rule="evenodd"/></svg></div>
+  <h2 class="text-lg font-semibold text-white"><%= title %></h2>
+  <p class="mt-1 max-w-md text-sm text-slate-400"><%= body %></p>
+  <% if local_assigns[:action_path] %>
+    <%= link_to action_label, action_path, class: "btn-ghost mt-5", data: { turbo_frame: "_top" } %>
+  <% end %>
+</div>

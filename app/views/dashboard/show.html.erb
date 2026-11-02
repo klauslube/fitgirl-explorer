@@ -1,0 +1,62 @@
+<% content_for :title, "Dashboard" %>
+
+<section class="relative overflow-hidden rounded-2xl border border-white/5 bg-gradient-to-br from-ink-800 via-ink-900 to-indigo-950/40 p-6 sm:p-10">
+  <h1 class="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">Find what everyone is talking about.</h1>
+  <p class="mt-2 max-w-xl text-slate-400">Browse the Lossless Repack catalog by popularity, genre, date and size.</p>
+  <%= form_with url: games_path, method: :get, class: "mt-6 flex max-w-xl gap-2" do %>
+    <%= search_field_tag :q, nil, placeholder: "Search by game name…", "aria-label": "Search by game name", class: "field !py-3" %>
+    <%= submit_tag "Search", name: nil, class: "btn" %>
+  <% end %>
+
+  <dl class="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
+    <% [
+      [ "Games indexed", number_with_delimiter(@games_count) ],
+      [ "Genres & tags", number_with_delimiter(@tags_count) ],
+      [ "Total comments", number_with_delimiter(@comments_total) ],
+      [ "Last sync", (@last_sync ? "#{time_ago_in_words(@last_sync)} ago" : "never") ]
+    ].each do |label, value| %>
+      <div>
+        <dt class="label !mb-0.5"><%= label %></dt>
+        <dd class="text-2xl font-bold text-white"><%= value %></dd>
+      </div>
+    <% end %>
+  </dl>
+</section>
+
+<% if @games_count.zero? %>
+  <div class="mt-8">
+    <%= render "shared/empty_state", title: "The catalog is empty",
+          body: "Run `bin/rails fitgirl:import` to fetch the public metadata, then reload this page." %>
+  </div>
+<% else %>
+  <section class="mt-10">
+    <div class="mb-4 flex items-end justify-between">
+      <h2 class="text-xl font-bold text-white">Most commented</h2>
+      <%= link_to "See all →", games_path(sort: "comments_desc"), class: "text-sm text-sky-300 hover:text-sky-200" %>
+    </div>
+    <div class="grid grid-cols-2 gap-4 sm:grid-cols-4 xl:grid-cols-6">
+      <%= render partial: "shared/game_card", collection: @most_commented, as: :game %>
+    </div>
+  </section>
+
+  <section class="mt-10">
+    <div class="mb-4 flex items-end justify-between">
+      <h2 class="text-xl font-bold text-white">Latest repacks</h2>
+      <%= link_to "See all →", games_path(sort: "newest"), class: "text-sm text-sky-300 hover:text-sky-200" %>
+    </div>
+    <div class="grid grid-cols-2 gap-4 sm:grid-cols-4 xl:grid-cols-6">
+      <%= render partial: "shared/game_card", collection: @latest, as: :game %>
+    </div>
+  </section>
+
+  <section class="mt-10">
+    <h2 class="mb-4 text-xl font-bold text-white">Popular genres</h2>
+    <div class="flex flex-wrap gap-2">
+      <% @top_tags.each do |tag| %>
+        <%= link_to games_path(tag_ids: [ tag.id ]), class: "panel flex items-center gap-2 px-3 py-2 text-sm text-slate-200 hover:border-sky-400/40" do %>
+          <%= tag.name %> <span class="text-xs text-slate-500"><%= number_with_delimiter(tag.games_count) %></span>
+        <% end %>
+      <% end %>
+    </div>
+  </section>
+<% end %>

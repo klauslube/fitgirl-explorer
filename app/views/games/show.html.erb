@@ -1,0 +1,68 @@
+<% content_for :title, @game.title %>
+
+<nav class="mb-4 text-sm text-slate-500" aria-label="Breadcrumb">
+  <%= link_to "Catalog", games_path, class: "hover:text-white" %> <span aria-hidden="true">/</span>
+  <span class="text-slate-300"><%= @game.title.truncate(70) %></span>
+</nav>
+
+<div class="grid gap-8 lg:grid-cols-[320px_1fr]">
+  <div data-controller="image-fallback" class="panel relative aspect-[3/4] self-start overflow-hidden bg-ink-700">
+    <% if @game.cover_url %>
+      <img src="<%= @game.cover_url %>" alt="<%= @game.title %> cover" referrerpolicy="no-referrer" class="h-full w-full object-cover"
+           data-image-fallback-target="img" data-action="error->image-fallback#show">
+    <% end %>
+    <div class="<%= 'hidden' if @game.cover_url %> absolute inset-0 grid place-items-center p-6 text-center font-semibold text-slate-500"
+         data-image-fallback-target="placeholder"><%= @game.title %></div>
+  </div>
+
+  <div>
+    <h1 class="text-2xl font-bold leading-tight text-white sm:text-3xl"><%= @game.title %></h1>
+    <p class="mt-1 text-sm text-slate-400">
+      Published <time datetime="<%= @game.published_at.iso8601 %>"><%= l(@game.published_at.to_date, format: :long) %></time>
+      <% if @game.repack_number %>· repack #<%= @game.repack_number %><% end %>
+    </p>
+
+    <% if @game.tags.any? %>
+      <div class="mt-4 flex flex-wrap gap-2"><% @game.tags.sort_by(&:name).each do |tag| %><%= tag_link(tag) %><% end %></div>
+    <% end %>
+
+    <dl class="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <% [
+        [ "Comments", comments_label(@game.comments_count), (@game.comments_count >= 100 ? "text-hot" : "text-white") ],
+        [ "Original size", format_size(@game.original_size_bytes) || "—", "text-white" ],
+        [ "Repack size", repack_size_label(@game) || "—", "text-white" ],
+        [ "Languages", @game.languages || "—", "text-white" ]
+      ].each do |label, value, color| %>
+        <div class="panel p-4">
+          <dt class="label !mb-1"><%= label %></dt>
+          <dd class="text-lg font-semibold <%= color %> break-words"><%= value %></dd>
+        </div>
+      <% end %>
+    </dl>
+
+    <% if @game.companies.any? %>
+      <p class="mt-5 text-sm text-slate-400"><span class="text-slate-500">Companies:</span> <%= @game.companies.to_sentence %></p>
+    <% end %>
+    <% if @game.description.present? %>
+      <p class="mt-4 max-w-prose text-slate-300"><%= @game.description %></p>
+    <% end %>
+
+    <div class="mt-8 flex flex-wrap items-center gap-3">
+      <%= link_to "View original post ↗", @game.source_url, class: "btn", target: "_blank", rel: "noopener noreferrer" %>
+      <%= link_to "Back to catalog", games_path, class: "btn-ghost" %>
+    </div>
+    <p class="mt-3 text-xs text-slate-500">
+      Metadata last refreshed <%= @game.last_scraped_at ? "#{time_ago_in_words(@game.last_scraped_at)} ago" : "never" %>;
+      comment count <%= @game.comments_synced_at ? "#{time_ago_in_words(@game.comments_synced_at)} ago" : "not yet synced" %>.
+    </p>
+  </div>
+</div>
+
+<% if @related.any? %>
+  <section class="mt-12">
+    <h2 class="mb-4 text-lg font-semibold text-white">Similar games</h2>
+    <div class="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+      <%= render partial: "shared/game_card", collection: @related, as: :game %>
+    </div>
+  </section>
+<% end %>

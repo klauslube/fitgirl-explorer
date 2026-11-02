@@ -1,0 +1,31 @@
+<%# locals: game %>
+<article class="game-card group panel overflow-hidden transition hover:-translate-y-0.5 hover:border-sky-400/30">
+  <%= link_to game_path(game), class: "block", data: { turbo_frame: "_top" } do %>
+    <div class="relative aspect-[3/4] bg-ink-700" data-controller="image-fallback">
+      <% if game.cover_url %>
+        <img src="<%= game.cover_url %>" alt="<%= game.title %> cover" loading="lazy" referrerpolicy="no-referrer"
+             class="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+             data-image-fallback-target="img" data-action="error->image-fallback#show">
+      <% end %>
+      <div class="<%= 'hidden' if game.cover_url %> absolute inset-0 grid place-items-center p-4 text-center text-sm font-semibold text-slate-500"
+           data-image-fallback-target="placeholder"><%= game.title.truncate(40) %></div>
+      <span class="absolute left-2 top-2 inline-flex items-center gap-1 rounded-full bg-black/70 px-2 py-1 text-xs font-semibold backdrop-blur
+                   <%= game.comments_count >= 100 ? 'text-hot' : 'text-slate-200' %>" title="<%= pluralize(game.comments_count, 'comment') %>">
+        <svg class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M2 5a3 3 0 013-3h10a3 3 0 013 3v7a3 3 0 01-3 3H9l-4 3.5V15a3 3 0 01-3-3V5z"/></svg>
+        <%= comments_label(game.comments_count) %>
+      </span>
+    </div>
+    <div class="space-y-2 p-3">
+      <h3 class="line-clamp-2 min-h-[2.5rem] text-sm font-semibold leading-snug text-white" title="<%= game.title %>"><%= game.title %></h3>
+      <div class="flex flex-wrap items-center justify-between gap-x-2 gap-y-0.5 text-xs text-slate-400">
+        <time datetime="<%= game.published_at.iso8601 %>"><%= game.published_at.strftime('%b %-d, %Y') %></time>
+        <% if (size = repack_size_label(game)) %><span class="font-medium text-slate-300 whitespace-nowrap"><%= size %></span><% end %>
+      </div>
+    </div>
+  <% end %>
+  <% if game.tags.any? %>
+    <div class="flex flex-wrap gap-1 px-3 pb-3">
+      <% game.tags.first(3).each do |tag| %><%= tag_link(tag) %><% end %>
+    </div>
+  <% end %>
+</article>

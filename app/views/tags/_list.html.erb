@@ -1,0 +1,17 @@
+<%# locals: selected, tags %>
+<ul class="max-h-64 space-y-0.5 overflow-y-auto pr-1">
+  <% (selected.to_a + tags.to_a).each do |tag| %>
+    <li>
+      <label class="flex cursor-pointer items-center gap-2 rounded px-1.5 py-1 text-sm hover:bg-white/5">
+        <%= check_box_tag "tag_ids[]", tag.id, selected.include?(tag), id: "tag_#{tag.id}",
+              class: "h-4 w-4 rounded border-white/20 bg-ink-900 text-sky-500 focus:ring-sky-400/30",
+              data: { action: "change->autosubmit#now" } %>
+        <span class="flex-1 truncate <%= 'font-semibold text-white' if selected.include?(tag) %>"><%= tag.name %></span>
+        <span class="text-xs text-slate-500"><%= tag.games_count %></span>
+      </label>
+    </li>
+  <% end %>
+  <% if selected.empty? && tags.empty? %>
+    <li class="px-1.5 py-2 text-sm text-slate-500">No tags match.</li>
+  <% end %>
+</ul>

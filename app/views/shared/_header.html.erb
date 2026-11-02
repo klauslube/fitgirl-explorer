@@ -1,0 +1,21 @@
+<header class="sticky top-0 z-30 border-b border-white/5 bg-ink-950/85 backdrop-blur">
+  <div class="mx-auto flex max-w-[1500px] items-center gap-4 px-4 py-3 sm:px-6 lg:px-8">
+    <%= link_to root_path, class: "flex items-center gap-2 text-lg font-bold tracking-tight text-white" do %>
+      <span class="grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-br from-sky-400 to-indigo-500 text-sm text-ink-950">FG</span>
+      <span class="hidden sm:inline">Explorer</span>
+    <% end %>
+
+    <% catalog = controller_name == "games" && action_name == "index" %>
+    <div class="mx-auto w-full max-w-2xl"><% unless catalog %>
+    <%= form_with url: games_path, method: :get, class: "relative w-full", data: { turbo_frame: "_top" } do %>
+      <svg class="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.48l4.31 4.3a1 1 0 01-1.4 1.42l-4.32-4.3A6 6 0 012 8z" clip-rule="evenodd"/></svg>
+      <%= search_field_tag :q, params[:q], placeholder: "Search games…", autocomplete: "off", "aria-label": "Search games",
+            class: "field !rounded-full !bg-ink-800 !py-2.5 !pl-10" %>
+    <% end %><% end %></div>
+
+    <nav class="flex items-center gap-1 text-sm">
+      <%= link_to "Catalog", games_path, class: "rounded-md px-3 py-2 text-slate-300 hover:bg-white/5 hover:text-white" %>
+      <%= link_to "Hot", games_path(sort: "comments_desc", min_comments: 100), class: "hidden rounded-md px-3 py-2 text-slate-300 hover:bg-white/5 hover:text-white sm:block" %>
+    </nav>
+  </div>
+</header>

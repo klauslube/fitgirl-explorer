@@ -1,0 +1,4 @@
+<% content_for :title, "Not found" %>
+<%= render "shared/empty_state", title: "We couldn't find that game",
+      body: "It may have been removed from the source, or the link is wrong.",
+      action_label: "Browse the catalog", action_path: games_path %>

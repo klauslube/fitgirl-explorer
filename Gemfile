@@ -59,7 +59,7 @@ group :development do
 end
 
 gem "nokogiri"
-gem "pagy", "~> 9.3"
+gem "pagy", "~> 43.8"
 
 group :development, :test do
   gem "rspec-rails"
